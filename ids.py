@@ -37,12 +37,8 @@ def getXlsxString(sh, i, in_columns_j):
     impValues = {}
     for item in in_columns_j.keys() :
         j = in_columns_j[item]
-        if item in ('закупка','продажа','цена','цена1') :
-            if getCellXlsx(row=i, col=j, isDigit='N', sheet=sh).find('Call for Pricing') >=0 :
-                impValues[item] = '0.1'
-            else :
-                impValues[item] = getCellXlsx(row=i, col=j, isDigit='Y', sheet=sh)
-            #print(sh, i, sh.cell( row=i, column=j).value, sh.cell(row=i, column=j).number_format, currencyType(sh, i, j))
+        if item in ('закупка','продажа','цена','цена1','цена2','цена3') :
+            impValues[item] = getCellXlsx(row=i, col=j, isDigit='Y', sheet=sh)
         elif item == 'валюта_по_формату':
             impValues[item] = currencyType(row=i, col=j, sheet=sh)
         else:
@@ -133,7 +129,7 @@ def convert_excel2csv(cfg):
                  impValues['подгруппа'] != ''):                  # подгруппа
                 subgrp = impValues['подгруппа']
                 continue
-            elif impValues['цена1'] == '0':                     # Пустая строка
+            elif impValues['описание'] == '':                    # Пустая строка
                 # print( 'Пустая строка. i=',i, impValues )
                 qty_blank_lines += 1
                 if qty_blank_lines > 4:
@@ -153,11 +149,8 @@ def convert_excel2csv(cfg):
                     for key in impValues.keys():
                         if shablon.find(key) >= 0:
                             shablon = shablon.replace(key, impValues[key])
-                    if (outColName == 'закупка') and ('*' in shablon):
-                        p = shablon.find("*")
-                        vvv1 = float(shablon[:p])
-                        vvv2 = float(shablon[p + 1:])
-                        shablon = str(round(vvv1 * vvv2, 2))
+                    if (outColName == 'закупка') and ('0' == shablon):
+                        shablon = impValues['цена3']
                     recOut[outColName] = shablon.strip()
 
             try:
@@ -347,7 +340,6 @@ def download( cfg ):
 
 
 
-
 def config_read( cfgFName ):
     cfg = configparser.ConfigParser(inline_comment_prefixes=('#'))
     if  os.path.exists('private.cfg'):     
@@ -389,11 +381,14 @@ def processing(cfgFName):
     cfg = config_read(cfgFName)
     filename_out = cfg.get('basic','filename_out')
     filename_in  = cfg.get('basic','filename_in')
+    filename_outRUR = filename_out[:-4]+'RUR'+filename_out[-4:]
+    filename_outUSD = filename_out[:-4]+'USD'+filename_out[-4:]
     
     convert_excel2csv(cfg)
     folderName = os.path.basename(os.getcwd())
     if os.name == 'nt' :
-        if os.path.exists(filename_out)  : shutil.copy2(filename_out , 'c://AV_PROM/prices/' + folderName +'/'+filename_out)
+        if os.path.exists(filename_outRUR)  : shutil.copy2(filename_outRUR , 'c://AV_PROM/prices/' + folderName +'/'+filename_outRUR)
+        if os.path.exists(filename_outUSD)  : shutil.copy2(filename_outUSD , 'c://AV_PROM/prices/' + folderName +'/'+filename_outUSD)
         if os.path.exists('python.log')  : shutil.copy2('python.log',  'c://AV_PROM/prices/' + folderName +'/python.log')
         if os.path.exists('python.log.1'): shutil.copy2('python.log.1','c://AV_PROM/prices/' + folderName +'/python.log.1')
     

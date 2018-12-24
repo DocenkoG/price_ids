@@ -68,7 +68,7 @@ def getCellXlsx(  row       # номер строки
                 t = t.replace('$','')
                 ss = str(float(t))
             except ValueError as e:
-                ss='0.01'
+                ss='0'
     else :
         if (cellValue == None) : 
             ss = ''
