@@ -385,12 +385,6 @@ def processing(cfgFName):
     filename_outUSD = filename_out[:-4]+'USD'+filename_out[-4:]
     
     convert_excel2csv(cfg)
-    folderName = os.path.basename(os.getcwd())
-    if os.name == 'nt' :
-        if os.path.exists(filename_outRUR)  : shutil.copy2(filename_outRUR , 'c://AV_PROM/prices/' + folderName +'/'+filename_outRUR)
-        if os.path.exists(filename_outUSD)  : shutil.copy2(filename_outUSD , 'c://AV_PROM/prices/' + folderName +'/'+filename_outUSD)
-        if os.path.exists('python.log')  : shutil.copy2('python.log',  'c://AV_PROM/prices/' + folderName +'/python.log')
-        if os.path.exists('python.log.1'): shutil.copy2('python.log.1','c://AV_PROM/prices/' + folderName +'/python.log.1')
     
 
 
